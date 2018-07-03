@@ -1,0 +1,32 @@
+---
+- name: OpenVPN stop
+  become: true
+  service:
+    name: openvpn
+    state: stopped
+    enabled: no
+  tags:
+    - vpn-uninstall
+
+- name: Backup /etc/openvpn folder
+  become: true
+  archive:
+    path: "/{{ vpn_cl_openvpn_path }}"
+    dest: /tmp/openvpn_{{ lookup('pipe','date +%Y-%m-%d_%H-%M-%S') }}.zip
+    format: zip
+    remove: yes
+  tags:
+    - vpn-uninstall
+
+- name: Uninstall OpenVPN
+  become: true
+  apt:
+    name: openvpn
+    state: absent
+    purge: yes
+  tags:
+    - vpn-uninstall
+
+- name: Set Install
+  set_fact:
+    vpn_cl_openvpn_install: true

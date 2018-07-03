@@ -1,0 +1,37 @@
+---
+- name: Check OpenVPN service exist
+  stat:
+    path: /etc/init.d/openvpn
+  register: ovpn_st
+
+- name: Check OpenVPN version
+  shell: "dpkg -s openvpn | grep Version"
+  register: ovpn_ver
+  when: ovpn_st.stat.exists
+
+- name: Uninstall OpenVPN
+  include_tasks: uninstall.yml
+  when: ovpn_ver.stdout is defined and vpn_cl_openvpn_ver not in ovpn_ver.stdout
+  tags:
+    - vpn-uninstall
+
+- name: Install OpenVPN
+  include_tasks: install.yml
+  when:
+    - not ovpn_st.stat.exists or vpn_cl_openvpn_install
+  tags:
+    - vpn-install
+
+- name: Get checksum md5 OpenVPN config file
+  stat:
+    path: "{{ vpn_cl_openvpn_path}}/openvpn.conf"
+    checksum_algorithm: md5
+  register: existing_checksum
+  tags:
+    - vpn-config
+
+- name: Configure OpenVPN
+  include_tasks: config.yml
+  tags:
+    - vpn-config
+  when:  existing_checksum.stat.checksum != vpn_cl_openvpn_config_md5

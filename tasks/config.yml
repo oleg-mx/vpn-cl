@@ -1,0 +1,16 @@
+---
+- name: Create OpenVPN config file
+  become: true
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: yes
+  with_items:
+  - "{{ vpn_cl_openvpn_path }}/openvpn.conf"
+  notify:
+    - OpenVPN restart
+  tags:
+    - vpn-config

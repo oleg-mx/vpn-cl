@@ -1,0 +1,5 @@
+---
+# defaults file for vpn-cl
+vpn_cl_openvpn_install: false
+vpn_cl_openvpn_path: "etc/openvpn"
+vpn_cl_openvpn_ver: "2.4.6-xenial0"

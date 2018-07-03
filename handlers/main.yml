@@ -1,0 +1,16 @@
+---
+# handlers file for vpn-cl
+- name: OpenVPN start
+  become: true
+  service:
+    name: openvpn
+    enabled: yes
+    state: started
+  tags: vpn-install
+
+- name: OpenVPN restart
+  become: true
+  service:
+    name: openvpn
+    state: restarted
+  tags: vpn-config

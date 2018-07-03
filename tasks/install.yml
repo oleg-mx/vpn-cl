@@ -1,0 +1,24 @@
+---
+- name: Add OpenVPN GPG key
+  become: true
+  apt_key:
+    url: https://swupdate.openvpn.net/repos/repo-public.gpg
+  tags:
+    - vpn-install
+
+- name: Add OpenVPN APT repository
+  apt_repository:
+    repo: deb [arch=amd64] http://build.openvpn.net/debian/openvpn/release/2.4 xenial main
+  tags:
+    - vpn-install
+
+- name: Install OpenVPN
+  become: true
+  apt:
+    name: "openvpn={{ vpn_cl_openvpn_ver }}"
+    state: present
+    update_cache: yes
+  notify:
+    - OpenVPN start
+  tags:
+    - vpn-install
