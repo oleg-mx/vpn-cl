@@ -23,8 +23,9 @@
     - vpn-install
 
 - name: Get checksum md5 OpenVPN config file
+  become: true
   stat:
-    path: "{{ vpn_cl_openvpn_path}}/openvpn.conf"
+    path: "/{{ vpn_cl_openvpn_path}}/openvpn.conf"
     checksum_algorithm: md5
   register: existing_checksum
   tags:
